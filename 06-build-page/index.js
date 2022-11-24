@@ -23,14 +23,14 @@ async function createTemplate(bundlePath) {
     try {
         let template = await fs.promises.readFile(htmlPath, 'utf-8');
         const components = await fs.promises.readdir(componentsDirPath, { withFileTypes: true });
-        components.forEach(async component => {
+        for (const component of components) {
             const tag = `{{${path.parse(component.name).name}}}`;
             if (template.includes(tag)) {
                 const content = await fs.promises.readFile(path.join(componentsDirPath, component.name), 'utf-8');
                 template = template.replaceAll(tag, content);
             }
             await fs.promises.writeFile(path.join(bundlePath, 'index.html'), template, 'utf-8');
-        })
+        }
     } catch (err) {
         console.error(err);
     }
@@ -40,12 +40,12 @@ async function mergeStyles() {
     const stylesDirPath = path.join(__dirname, 'styles');
     try {
         const files = await fs.promises.readdir(stylesDirPath, { withFileTypes: true });
-        files.forEach(async file => {
+        for (const file of files) {
             if (file.isFile() && path.extname(file.name) === '.css') {
                 const content = await fs.promises.readFile(path.join(stylesDirPath, file.name), 'utf-8');
                 await fs.promises.appendFile(path.join(stylesDirPath, '..', 'project-dist', 'style.css'), `${content}\n`);
             }
-        })
+        }
     } catch (err) {
         console.error(err);
     }
@@ -55,13 +55,13 @@ async function copyAssets(dest, src) {
     try {
         await fs.promises.mkdir(dest, { recursive: true });
         const files = await fs.promises.readdir(src, { withFileTypes: true });
-        files.forEach(async file => {
+        for (const file of files) {
             if (file.isFile()) {
                 await fs.promises.copyFile(path.join(src, file.name), path.join(dest, file.name));
             } else {
                 copyAssets(path.join(dest, file.name), path.join(src, file.name));
             }
-        })
+        }
     } catch (err) {
         console.error(err);
     }

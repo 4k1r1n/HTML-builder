@@ -6,7 +6,7 @@ const dirPath = path.join(__dirname, 'secret-folder');
 (async () => {
     try {
         const files = await fs.promises.readdir(dirPath, { withFileTypes: true });
-        files.forEach(async file => {
+        for (const file of files) {
             if (file.isFile()) {
                 const stats = await fs.promises.stat(path.join(dirPath, file.name));
                 const fileName = file.name.split('.')[0];
@@ -14,7 +14,7 @@ const dirPath = path.join(__dirname, 'secret-folder');
                 const fileSize = stats.size;
                 console.log(`${fileName} - ${fileType} - ${fileSize}bytes`);
             }
-        })
+        }
     } catch (err) {
         console.error(err);
     }
